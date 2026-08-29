@@ -22,6 +22,11 @@ RegisterNUICallback('setWind', function(data, cb)
     cb({ success = true })
 end)
 
+RegisterNUICallback('setRainLevel', function(data, cb)
+    TriggerServerEvent('ak47_timesync:server:setRainLevel', tonumber(data.level) or -1.0)
+    cb({ success = true })
+end)
+
 local toggleEvents = {
     toggleFreezeTime = 'ak47_timesync:server:toggleFreezeTime',
     toggleFreezeWeather = 'ak47_timesync:server:toggleFreezeWeather',

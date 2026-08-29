@@ -70,6 +70,12 @@ function Ak47TimeSync.Client.IsDynamicWeather()
     return ClientWeather and (ClientWeather.dynamic == true) or false
 end
 
+--- Returns current rain level override (-1.0 = auto, 0.0 - 1.0 = custom)
+--- @return number
+function Ak47TimeSync.Client.GetRainLevel()
+    return ClientWeather and ClientWeather.rainLevel or -1.0
+end
+
 --- Returns whether sync is paused locally (e.g. character selector, clothing store)
 --- @return boolean
 function Ak47TimeSync.Client.IsSyncPaused()
@@ -92,6 +98,7 @@ function Ak47TimeSync.Client.GetFullState()
         snowTracks = ClientWeather and ClientWeather.snowTracks == true or false,
         dynamic = Ak47TimeSync.Client.IsDynamicWeather(),
         dynamicCycle = Ak47TimeSync.Client.IsDynamicWeather(),
+        rainLevel = Ak47TimeSync.Client.GetRainLevel(),
         windSpeed = 0,
         windDirection = 0,
         paused = Ak47TimeSync.Client.IsSyncPaused(),
@@ -205,6 +212,9 @@ RegisterExport('isDynamicWeather', Ak47TimeSync.Client.IsDynamicWeather)
 RegisterExport('IsDynamicWeather', Ak47TimeSync.Client.IsDynamicWeather)
 RegisterExport('getDynamicWeather', Ak47TimeSync.Client.IsDynamicWeather)
 RegisterExport('GetDynamicWeather', Ak47TimeSync.Client.IsDynamicWeather)
+
+RegisterExport('getRainLevel', Ak47TimeSync.Client.GetRainLevel)
+RegisterExport('GetRainLevel', Ak47TimeSync.Client.GetRainLevel)
 
 RegisterExport('isSyncPaused', Ak47TimeSync.Client.IsSyncPaused)
 RegisterExport('IsSyncPaused', Ak47TimeSync.Client.IsSyncPaused)

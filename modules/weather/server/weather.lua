@@ -70,3 +70,9 @@ RegisterNetEvent('ak47_timesync:server:setWind', function(speed, direction)
     if SyncState.SaveSettings then SyncState.SaveSettings() end
 end)
 
+RegisterNetEvent('ak47_timesync:server:setRainLevel', function(level)
+    local src = source
+    if not Ak47TimeSync.Server.HasPermission(src) then return end
+    SyncState.SetRainLevel(src, level)
+end)
+

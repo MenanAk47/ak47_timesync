@@ -9,10 +9,21 @@ ClientWeather = {
     blackout = false,
     paused = false,
     snowTracks = false,
+    rainLevel = -1.0,
     transitionDuration = 10,
 }
 
 local SNOW_TYPES = { XMAS = true, SNOW = true, SNOWLIGHT = true, BLIZZARD = true }
+
+function ApplyClientRainLevel(level)
+    if ClientWeather.paused then return end
+    ClientWeather.rainLevel = tonumber(level) or -1.0
+    if ClientWeather.rainLevel >= 0.0 then
+        SetRainLevel(ClientWeather.rainLevel + 0.0)
+    else
+        SetRainLevel(-1.0)
+    end
+end
 
 function ApplyClientWeather(weatherType, transitionDuration, forcedInstant)
     if ClientWeather.paused then return end
@@ -29,6 +40,12 @@ function ApplyClientWeather(weatherType, transitionDuration, forcedInstant)
     else
         ClearOverrideWeather()
         SetWeatherTypeOvertimePersist(weatherType, transitionDuration + 0.0)
+    end
+
+    if ClientWeather.rainLevel >= 0.0 then
+        SetRainLevel(ClientWeather.rainLevel + 0.0)
+    else
+        SetRainLevel(-1.0)
     end
 
     local isSnow = (SNOW_TYPES[weatherType] == true) or (ClientWeather.snowTracks == true)
@@ -87,6 +104,11 @@ RegisterNetEvent('ak47_timesync:client:setWind', function(data)
         SetWindDirection((data.direction or 0) + 0.0)
         SendUiUpdate({ windSpeed = data.speed or 0, windDirection = data.direction or 0 })
     end
+end)
+
+RegisterNetEvent('ak47_timesync:client:setRainLevel', function(level)
+    ApplyClientRainLevel(level)
+    SendUiUpdate({ rainLevel = ClientWeather.rainLevel })
 end)
 
 CreateThread(function()

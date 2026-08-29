@@ -58,6 +58,7 @@ Config.NewWeatherTimer = 10                 -- Interval in minutes between autom
 -- Atmospheric & Environmental Dynamics
 Config.DefaultWindSpeed = 0.0               -- Default wind speed (0 - 12 m/s)
 Config.DefaultWindDirection = 0.0           -- Default wind direction (0 - 360 degrees)
+Config.DefaultRainLevel = -1.0              -- Default rain level override (-1.0 = auto/game weather default, 0.0 - 1.0 = manual override)
 
 
 Presets = {}

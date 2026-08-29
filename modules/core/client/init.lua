@@ -24,6 +24,7 @@ RegisterNetEvent('ak47_timesync:client:syncState', function(state, forcedInstant
     ClientWeather.freeze = state.freezeWeather == true
     ClientWeather.snowTracks = state.snowTracks == true
     ClientWeather.next = state.nextWeather or 'CLEAR'
+    ClientWeather.rainLevel = tonumber(state.rainLevel) or -1.0
 
     local isPaused = (ClientTime and ClientTime.paused) or (PauseSync and PauseSync.state)
 
@@ -37,6 +38,7 @@ RegisterNetEvent('ak47_timesync:client:syncState', function(state, forcedInstant
 
         ApplyClientWeather(state.weather, state.transitionDuration or 10, forcedInstant)
         ApplyClientBlackout(state.blackout == true)
+        ApplyClientRainLevel(state.rainLevel)
     end
 
     SendUiUpdate(state)

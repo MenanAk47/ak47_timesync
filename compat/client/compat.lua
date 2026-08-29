@@ -30,6 +30,7 @@ setmetatable(self, {
         if k == 'freeze' then return state.freezeTime end
         if k == 'blackout' then return state.blackout end
         if k == 'dynamic' then return state.dynamic end
+        if k == 'rainLevel' then return state.rainLevel end
         return rawget(t, k)
     end
 })

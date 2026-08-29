@@ -23,7 +23,7 @@ SyncState = {
 
     windSpeed = Config.DefaultWindSpeed or 0.0,
     windDirection = Config.DefaultWindDirection or 0.0,
-    rainLevel = -1.0,
+    rainLevel = Config.DefaultRainLevel or -1.0,
 }
 
 if WeatherCycles and WeatherCycles.GetNextWeather then
@@ -40,6 +40,7 @@ function SyncState.SaveSettings()
         newWeatherTimer = tonumber(SyncState.newWeatherTimer) or 10,
         windSpeed = tonumber(SyncState.windSpeed) or 0.0,
         windDirection = tonumber(SyncState.windDirection) or 0.0,
+        rainLevel = tonumber(SyncState.rainLevel) or -1.0,
     }
     SaveResourceFile(GetCurrentResourceName(), SETTINGS_FILE, json.encode(data, { indent = true }), -1)
 end
@@ -57,6 +58,7 @@ function SyncState.LoadSettings()
             if data.newWeatherTimer ~= nil then SyncState.newWeatherTimer = tonumber(data.newWeatherTimer) or SyncState.newWeatherTimer end
             if data.windSpeed ~= nil then SyncState.windSpeed = tonumber(data.windSpeed) or SyncState.windSpeed end
             if data.windDirection ~= nil then SyncState.windDirection = tonumber(data.windDirection) or SyncState.windDirection end
+            if data.rainLevel ~= nil then SyncState.rainLevel = tonumber(data.rainLevel) or SyncState.rainLevel end
             return
         end
     end
@@ -191,6 +193,13 @@ end
 function SyncState.SetDynamicCycle(source, state)
     local val = ToggleState('dynamicCycle', state)
     TriggerClientEvent('ak47_timesync:client:setDynamicCycle', -1, val)
+end
+
+function SyncState.SetRainLevel(source, level)
+    SyncState.rainLevel = tonumber(level) or -1.0
+    SyncState.SaveSettings()
+    TriggerClientEvent('ak47_timesync:client:setRainLevel', -1, SyncState.rainLevel)
+    TriggerEvent('ak47_timesync:server:onRainLevelChanged', source, SyncState.rainLevel)
 end
 
 -- Client Connection Handshake

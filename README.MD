@@ -89,23 +89,13 @@ exports['ak47_timesync']:SetWeather('RAIN', 10, false) -- weather, durationSecon
 local nextWeather = exports['ak47_timesync']:GetNextWeather()
 exports['ak47_timesync']:NextWeatherStage()
 
--- Blackout
-local isBlackout = exports['ak47_timesync']:GetBlackout()
-exports['ak47_timesync']:SetBlackout(true) -- or toggle with nil
-
--- Freeze Controls
-local isTimeFrozen = exports['ak47_timesync']:IsTimeFrozen()
-local isWeatherFrozen = exports['ak47_timesync']:IsWeatherFrozen()
-exports['ak47_timesync']:SetTimeFreeze(true)
-exports['ak47_timesync']:SetWeatherFreeze(true)
-exports['ak47_timesync']:SetGlobalFreeze(true)
-
--- Dynamic Cycle
-local isDynamic = exports['ak47_timesync']:IsDynamicWeather()
-exports['ak47_timesync']:SetDynamicWeather(true)
-
--- Snow Tracks
-exports['ak47_timesync']:SetSnowTracks(true)
+-- Set & Toggle Environment Features
+exports['ak47_timesync']:SetBlackout(true)           -- Enable city blackout
+exports['ak47_timesync']:SetFreezeTime(true)         -- Freeze time
+exports['ak47_timesync']:SetFreezeWeather(true)      -- Freeze weather
+exports['ak47_timesync']:SetDynamicWeather(true)     -- Enable dynamic cycling
+exports['ak47_timesync']:SetSnowTracks(true)         -- Enable snow tracks
+exports['ak47_timesync']:SetRainLevel(0.8)           -- Override rain intensity (-1.0 = auto, 0.0 - 1.0 = custom)
 
 -- Full Snapshot
 local state = exports['ak47_timesync']:GetFullState()
@@ -117,9 +107,10 @@ local state = exports['ak47_timesync']:GetFullState()
 -- Get Time
 local time = exports['ak47_timesync']:GetTime()
 
--- Get Weather & Blackout
+-- Get Weather, Blackout & Rain
 local weather = exports['ak47_timesync']:GetWeather()
 local isBlackout = exports['ak47_timesync']:GetBlackout()
+local rainLevel = exports['ak47_timesync']:GetRainLevel()
 
 -- Pause Sync Locally (for clothing stores, apartment cutscenes, etc.)
 exports['ak47_timesync']:SetPauseSync(true, 20) -- pauses sync and sets client hour to 20:00

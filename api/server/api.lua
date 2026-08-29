@@ -86,6 +86,21 @@ function Ak47TimeSync.Server.IsDynamicWeather()
     return SyncState and (SyncState.dynamicCycle == true) or false
 end
 
+--- Returns current rain level override (-1.0 = auto, 0.0 - 1.0 = custom)
+--- @return number
+function Ak47TimeSync.Server.GetRainLevel()
+    return SyncState and SyncState.rainLevel or -1.0
+end
+
+--- Sets current rain level override
+--- @param source number Source of the change
+--- @param level number Rain level (-1.0 for auto, 0.0 to 1.0)
+--- @return number
+function Ak47TimeSync.Server.SetRainLevel(source, level)
+    SyncState.SetRainLevel(source or 0, level)
+    return SyncState.rainLevel
+end
+
 --- Returns full server environment state snapshot
 --- @return table
 function Ak47TimeSync.Server.GetFullState()
@@ -106,6 +121,9 @@ function Ak47TimeSync.Server.GetFullState()
         snowTracks = SyncState and SyncState.snowTracks == true or false,
         dynamicCycle = Ak47TimeSync.Server.IsDynamicWeather(),
         newWeatherTimer = SyncState and SyncState.newWeatherTimer or 10,
+        rainLevel = Ak47TimeSync.Server.GetRainLevel(),
+        windSpeed = SyncState and SyncState.windSpeed or 0.0,
+        windDirection = SyncState and SyncState.windDirection or 0.0,
     }
 end
 
@@ -345,6 +363,11 @@ RegisterExport('setSnowTracks', function(s) return Ak47TimeSync.Server.SetSnowTr
 RegisterExport('SetSnowTracks', function(s) return Ak47TimeSync.Server.SetSnowTracks(0, s) end)
 RegisterExport('toggleSnowTracks', function(s) return Ak47TimeSync.Server.SetSnowTracks(0, s) end)
 RegisterExport('ToggleSnowTracks', function(s) return Ak47TimeSync.Server.SetSnowTracks(0, s) end)
+
+RegisterExport('getRainLevel', Ak47TimeSync.Server.GetRainLevel)
+RegisterExport('GetRainLevel', Ak47TimeSync.Server.GetRainLevel)
+RegisterExport('setRainLevel', function(l) return Ak47TimeSync.Server.SetRainLevel(0, l) end)
+RegisterExport('SetRainLevel', function(l) return Ak47TimeSync.Server.SetRainLevel(0, l) end)
 
 RegisterExport('nextWeatherStage', function() Ak47TimeSync.Server.NextWeatherStage(0) end)
 RegisterExport('NextWeatherStage', function() Ak47TimeSync.Server.NextWeatherStage(0) end)
