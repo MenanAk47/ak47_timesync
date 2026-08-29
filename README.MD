@@ -3,6 +3,8 @@
 High-performance, modern Time and Weather synchronization resource for FiveM with smooth time interpolation, probabilistic dynamic weather cycles, environmental FX (blackout, snow footprints, wind physics), multi-framework admin UI, and 100% drop-in compatibility for existing scripts.
 
 ---
+![image](https://github.com/user-attachments/assets/19b002f3-ac7e-446d-b9b7-9976ce08840c)
+---
 
 ## ⚡ Features
 
