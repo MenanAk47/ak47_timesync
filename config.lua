@@ -1,3 +1,5 @@
+Lib47 = exports['ak47_lib']:GetLibObject()
+
 Config = {}
 Config.Locale = 'en'
 
