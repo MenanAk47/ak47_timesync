@@ -40,7 +40,7 @@ RegisterCommand('freezetime', function(source)
     if not Ak47TimeSync.Server.HasPermission(source) then return end
     local isFrozen = Ak47TimeSync.Server.SetFreezeTime(source)
     if source > 0 and Lib47 and Lib47.Notify then
-        Lib47.Notify(source, string.format(_U('freeze_time_toggled'), isFrozen and _U('enabled') or _U('disabled')), 'info')
+        Lib47.Notify(source, _U('freeze_time_toggled', isFrozen and _U('enabled') or _U('disabled')), 'info')
     end
 end, false)
 
@@ -48,7 +48,7 @@ RegisterCommand('freezeweather', function(source)
     if not Ak47TimeSync.Server.HasPermission(source) then return end
     local isFrozen = Ak47TimeSync.Server.SetFreezeWeather(source)
     if source > 0 and Lib47 and Lib47.Notify then
-        Lib47.Notify(source, string.format(_U('freeze_weather_toggled'), isFrozen and _U('enabled') or _U('disabled')), 'info')
+        Lib47.Notify(source, _U('freeze_weather_toggled', isFrozen and _U('enabled') or _U('disabled')), 'info')
     end
 end, false)
 
@@ -56,7 +56,7 @@ RegisterCommand('blackout', function(source)
     if not Ak47TimeSync.Server.HasPermission(source) then return end
     local isBlackout = Ak47TimeSync.Server.SetBlackout(source)
     if source > 0 and Lib47 and Lib47.Notify then
-        Lib47.Notify(source, string.format(_U('blackout_toggled'), isBlackout and _U('enabled') or _U('disabled')), 'info')
+        Lib47.Notify(source, _U('blackout_toggled', isBlackout and _U('enabled') or _U('disabled')), 'info')
     end
 end, false)
 

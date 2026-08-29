@@ -21,7 +21,7 @@ RegisterNetEvent('ak47_timesync:server:setWeather', function(weatherType, transi
 
     local ok = Ak47TimeSync.Server.SetWeather(src, weatherType, transitionDuration, forcedInstant)
     if ok and src > 0 and Lib47 and Lib47.Notify then
-        Lib47.Notify(src, string.format(_U('weather_updated'), weatherType, tonumber(transitionDuration) or 10), 'success')
+        Lib47.Notify(src, _U('weather_updated', weatherType, tonumber(transitionDuration) or 10), 'success')
     end
 end)
 
@@ -30,7 +30,7 @@ RegisterNetEvent('ak47_timesync:server:setBlackout', function(state)
     if not Ak47TimeSync.Server.HasPermission(src) then return end
     local isBlackout = Ak47TimeSync.Server.SetBlackout(src, state)
     if src > 0 and Lib47 and Lib47.Notify then
-        Lib47.Notify(src, string.format(_U('blackout_toggled'), isBlackout and _U('enabled') or _U('disabled')), 'info')
+        Lib47.Notify(src, _U('blackout_toggled', isBlackout and _U('enabled') or _U('disabled')), 'info')
     end
 end)
 
@@ -39,7 +39,7 @@ RegisterNetEvent('ak47_timesync:server:toggleFreezeWeather', function(state)
     if not Ak47TimeSync.Server.HasPermission(src) then return end
     local isFrozen = Ak47TimeSync.Server.SetFreezeWeather(src, state)
     if src > 0 and Lib47 and Lib47.Notify then
-        Lib47.Notify(src, string.format(_U('freeze_weather_toggled'), isFrozen and _U('enabled') or _U('disabled')), 'info')
+        Lib47.Notify(src, _U('freeze_weather_toggled', isFrozen and _U('enabled') or _U('disabled')), 'info')
     end
 end)
 
@@ -48,7 +48,7 @@ RegisterNetEvent('ak47_timesync:server:setDynamicCycle', function(state)
     if not Ak47TimeSync.Server.HasPermission(src) then return end
     local isDynamic = Ak47TimeSync.Server.SetDynamicWeather(src, state)
     if src > 0 and Lib47 and Lib47.Notify then
-        Lib47.Notify(src, string.format(_U('dynamic_weather_toggled'), isDynamic and _U('enabled') or _U('disabled')), 'info')
+        Lib47.Notify(src, _U('dynamic_weather_toggled', isDynamic and _U('enabled') or _U('disabled')), 'info')
     end
 end)
 
@@ -57,7 +57,7 @@ RegisterNetEvent('ak47_timesync:server:setSnowTracks', function(state)
     if not Ak47TimeSync.Server.HasPermission(src) then return end
     local isSnow = Ak47TimeSync.Server.SetSnowTracks(src, state)
     if src > 0 and Lib47 and Lib47.Notify then
-        Lib47.Notify(src, string.format(_U('snow_tracks_toggled'), isSnow and _U('enabled') or _U('disabled')), 'info')
+        Lib47.Notify(src, _U('snow_tracks_toggled', isSnow and _U('enabled') or _U('disabled')), 'info')
     end
 end)
 

@@ -32,7 +32,7 @@ RegisterNetEvent('ak47_timesync:server:setTime', function(hours, mins, seconds, 
 
     local ok = Ak47TimeSync.Server.SetTime(src, hours, mins, seconds, transitionSpeed, forcedInstant)
     if ok and src > 0 and Lib47 and Lib47.Notify then
-        Lib47.Notify(src, string.format(_U('time_updated'), tonumber(hours), tonumber(mins), 'Smooth'), 'success')
+        Lib47.Notify(src, _U('time_updated', tonumber(hours), tonumber(mins), forcedInstant and 'Instant' or 'Smooth'), 'success')
     end
 end)
 
@@ -41,7 +41,7 @@ RegisterNetEvent('ak47_timesync:server:toggleFreezeTime', function(state)
     if not Ak47TimeSync.Server.HasPermission(src) then return end
     local isFrozen = Ak47TimeSync.Server.SetFreezeTime(src, state)
     if src > 0 and Lib47 and Lib47.Notify then
-        Lib47.Notify(src, string.format(_U('freeze_time_toggled'), isFrozen and _U('enabled') or _U('disabled')), 'info')
+        Lib47.Notify(src, _U('freeze_time_toggled', isFrozen and _U('enabled') or _U('disabled')), 'info')
     end
 end)
 
