@@ -1,0 +1,10 @@
+{
+  "freezeTime": false,
+  "freezeWeather": false,
+  "blackout": false,
+  "snowTracks": false,
+  "dynamicCycle": true,
+  "newWeatherTimer": 10,
+  "windSpeed": 0.0,
+  "windDirection": 0.0
+}
