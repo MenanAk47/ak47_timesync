@@ -1,5 +1,8 @@
 # AK47 Time & Weather Sync
 
+[![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/menanak47)
+[![Support](https://img.shields.io/badge/Support-Community-blue?style=flat-square)](https://discord.gg/menanak47)
+
 High-performance, modern Time and Weather synchronization resource for FiveM with smooth time interpolation, probabilistic dynamic weather cycles, environmental FX (blackout, snow footprints, wind physics), multi-framework admin UI, and 100% drop-in compatibility for existing scripts.
 
 ---
@@ -157,6 +160,8 @@ Webhooks = {
 
 ---
 
+
 ## 📄 License & Credits
 
-Developed by **MenanAk47**.
+- Developed by **MenanAk47**
+- **Support & Discord:** [discord.gg/menanak47](https://discord.gg/menanak47)
