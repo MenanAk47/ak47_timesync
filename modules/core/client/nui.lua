@@ -33,6 +33,7 @@ local toggleEvents = {
     toggleBlackout = 'ak47_timesync:server:setBlackout',
     toggleSnowTracks = 'ak47_timesync:server:setSnowTracks',
     setDynamicCycle = 'ak47_timesync:server:setDynamicCycle',
+    toggleZoneWeather = 'ak47_timesync:server:toggleZoneWeather',
 }
 
 for cbName, srvEvt in pairs(toggleEvents) do
@@ -41,3 +42,9 @@ for cbName, srvEvt in pairs(toggleEvents) do
         cb({ success = true })
     end)
 end
+
+RegisterNUICallback('setZoneWeather', function(data, cb)
+    TriggerServerEvent('ak47_timesync:server:setZoneWeather', data.zoneId or 'ALL', tostring(data.weather or 'CLEAR'), tonumber(data.transitionDuration) or 12, data.instant == true)
+    cb({ success = true })
+end)
+

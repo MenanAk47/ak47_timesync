@@ -24,6 +24,7 @@ SyncState = {
     windSpeed = Config.DefaultWindSpeed or 0.0,
     windDirection = Config.DefaultWindDirection or 0.0,
     rainLevel = Config.DefaultRainLevel or -1.0,
+    zoneWeatherEnabled = Config.ZoneWeather and Config.ZoneWeather.Enabled or false,
 }
 
 if WeatherCycles and WeatherCycles.GetNextWeather then
@@ -41,6 +42,7 @@ function SyncState.SaveSettings()
         windSpeed = tonumber(SyncState.windSpeed) or 0.0,
         windDirection = tonumber(SyncState.windDirection) or 0.0,
         rainLevel = tonumber(SyncState.rainLevel) or -1.0,
+        zoneWeatherEnabled = SyncState.zoneWeatherEnabled == true,
     }
     SaveResourceFile(GetCurrentResourceName(), SETTINGS_FILE, json.encode(data, { indent = true }), -1)
 end
@@ -59,6 +61,10 @@ function SyncState.LoadSettings()
             if data.windSpeed ~= nil then SyncState.windSpeed = tonumber(data.windSpeed) or SyncState.windSpeed end
             if data.windDirection ~= nil then SyncState.windDirection = tonumber(data.windDirection) or SyncState.windDirection end
             if data.rainLevel ~= nil then SyncState.rainLevel = tonumber(data.rainLevel) or SyncState.rainLevel end
+            if data.zoneWeatherEnabled ~= nil then
+                SyncState.zoneWeatherEnabled = data.zoneWeatherEnabled == true
+                if ZoneWeather then ZoneWeather.enabled = SyncState.zoneWeatherEnabled end
+            end
             return
         end
     end
@@ -85,6 +91,8 @@ function SyncState.GetFullState()
         windSpeed = SyncState.windSpeed,
         windDirection = SyncState.windDirection,
         rainLevel = SyncState.rainLevel,
+        zoneWeatherEnabled = SyncState.zoneWeatherEnabled == true,
+        zones = ZoneWeather and ZoneWeather.zones or {},
     }
 end
 
@@ -93,6 +101,9 @@ function SyncState.Broadcast(targetSource, forcedInstant)
     local target = targetSource or -1
 
     TriggerClientEvent('ak47_timesync:client:syncState', target, state, forcedInstant or false)
+    if ZoneWeather and ZoneWeather.Broadcast then
+        ZoneWeather.Broadcast(target)
+    end
 
     -- Compatibility client broadcasts
     TriggerClientEvent('qb-weathersync:client:SyncWeather', target, SyncState.weather, SyncState.blackout)
@@ -155,7 +166,9 @@ function SyncState.SetWeather(source, weatherType, transitionDuration, forcedIns
     TriggerClientEvent('vSync:updateWeather', -1, SyncState.weather, SyncState.blackout)
 
     TriggerEvent('ak47_timesync:server:onWeatherChanged', source, SyncState.weather, SyncState.transitionDuration)
+    TriggerEvent('ak47_timesync:server:onDynamicWeatherCycle')
 end
+
 
 local function ToggleState(key, state)
     SyncState[key] = (state == nil) and not SyncState[key] or (state == true)

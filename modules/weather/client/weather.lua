@@ -11,6 +11,8 @@ ClientWeather = {
     snowTracks = false,
     rainLevel = -1.0,
     transitionDuration = 10,
+    windSpeed = 0.0,
+    windDirection = 0.0,
 }
 
 local SNOW_TYPES = { XMAS = true, SNOW = true, SNOWLIGHT = true, BLIZZARD = true }
@@ -66,13 +68,16 @@ end
 RegisterNetEvent('ak47_timesync:client:updateWeather', function(data, forcedInstant)
     if ClientWeather.paused then return end
     ClientWeather.next = data.nextWeather or ClientWeather.next
-    ApplyClientWeather(data.weather, data.transitionDuration or 10, forcedInstant or false)
+    if not (ClientZoneWeather and ClientZoneWeather.enabled) then
+        ApplyClientWeather(data.weather, data.transitionDuration or 10, forcedInstant or false)
+    end
     SendUiUpdate({
         weather = data.weather,
         nextWeather = data.nextWeather or ClientWeather.next,
         transitionDuration = data.transitionDuration or 10,
     })
 end)
+
 
 RegisterNetEvent('ak47_timesync:client:setFreezeWeather', function(state)
     ClientWeather.freeze = state == true
@@ -99,10 +104,12 @@ end)
 
 RegisterNetEvent('ak47_timesync:client:setWind', function(data)
     if data then
-        SetWind((data.speed or 0) + 0.0)
-        SetWindSpeed((data.speed or 0) + 0.0)
-        SetWindDirection((data.direction or 0) + 0.0)
-        SendUiUpdate({ windSpeed = data.speed or 0, windDirection = data.direction or 0 })
+        ClientWeather.windSpeed = (tonumber(data.speed) or 0.0) + 0.0
+        ClientWeather.windDirection = (tonumber(data.direction) or 0.0) + 0.0
+        SetWind(ClientWeather.windSpeed)
+        SetWindSpeed(ClientWeather.windSpeed)
+        SetWindDirection(ClientWeather.windDirection)
+        SendUiUpdate({ windSpeed = ClientWeather.windSpeed, windDirection = ClientWeather.windDirection })
     end
 end)
 

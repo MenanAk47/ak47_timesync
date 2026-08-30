@@ -82,9 +82,44 @@ function Ak47TimeSync.Client.IsSyncPaused()
     return (ClientTime and ClientTime.paused == true) or (PauseSync and PauseSync.state == true) or false
 end
 
+--- Returns whether Zone-Based Weather mode is enabled
+--- @return boolean
+function Ak47TimeSync.Client.IsZoneWeatherEnabled()
+    return ClientZoneWeather and (ClientZoneWeather.enabled == true) or false
+end
+
+--- Returns current zone ID and label where the local player is located
+--- @return string zoneId, string zoneLabel
+function Ak47TimeSync.Client.GetCurrentZone()
+    if ClientZoneWeather and ClientZoneWeather.GetZoneAtCoords then
+        local zid, zlbl = ClientZoneWeather.GetZoneAtCoords()
+        if zid then return zid, zlbl end
+    end
+    local zoneId = ClientZoneWeather and ClientZoneWeather.currentZoneId or 'LS_SOUTH'
+    local zoneLabel = ClientZoneWeather and ClientZoneWeather.currentZoneLabel or 'Los Santos South & Harbor'
+    return zoneId, zoneLabel
+end
+
+--- Returns weather state for a specific zone
+--- @param zoneId string Zone identifier
+--- @return string Weather name
+function Ak47TimeSync.Client.GetZoneWeather(zoneId)
+    if not zoneId then return Ak47TimeSync.Client.GetWeather() end
+    local z = ClientZoneWeather and ClientZoneWeather.zones and ClientZoneWeather.zones[zoneId]
+    return z and z.current or Ak47TimeSync.Client.GetWeather()
+end
+
+--- Returns whether player is inside Mount Chiliad alpine elevation
+--- @return boolean isInside, number tier
+function Ak47TimeSync.Client.IsInsideChiliad()
+    local tier = ClientZoneWeather and ClientZoneWeather.chiliadTier or 0
+    return tier > 0, tier
+end
+
 --- Returns the complete client state snapshot
 --- @return table
 function Ak47TimeSync.Client.GetFullState()
+    local curZId, curZLbl = Ak47TimeSync.Client.GetCurrentZone()
     return {
         hours = ClientTime and ClientTime.hours or 12,
         mins = ClientTime and ClientTime.mins or 0,
@@ -99,11 +134,19 @@ function Ak47TimeSync.Client.GetFullState()
         dynamic = Ak47TimeSync.Client.IsDynamicWeather(),
         dynamicCycle = Ak47TimeSync.Client.IsDynamicWeather(),
         rainLevel = Ak47TimeSync.Client.GetRainLevel(),
-        windSpeed = 0,
-        windDirection = 0,
+        windSpeed = ClientWeather and ClientWeather.windSpeed or 0.0,
+        windDirection = ClientWeather and ClientWeather.windDirection or 0.0,
         paused = Ak47TimeSync.Client.IsSyncPaused(),
+        zoneWeatherEnabled = Ak47TimeSync.Client.IsZoneWeatherEnabled(),
+        zones = ClientZoneWeather and ClientZoneWeather.zones or {},
+        currentZone = curZId or 'LS_SOUTH',
+        currentZoneLabel = curZLbl or 'Los Santos South & Harbor',
+        chiliadTier = ClientZoneWeather and ClientZoneWeather.chiliadTier or 0,
+        zoneConfig = Config.ZoneWeather or {},
     }
 end
+
+
 
 -- ====================================================================
 -- Sync Pause / Resume Controls
@@ -227,3 +270,13 @@ RegisterExport('TogglePauseSync', function(s, h) Ak47TimeSync.Client.SetPauseSyn
 
 RegisterExport('getFullState', Ak47TimeSync.Client.GetFullState)
 RegisterExport('GetFullState', Ak47TimeSync.Client.GetFullState)
+
+RegisterExport('isZoneWeatherEnabled', Ak47TimeSync.Client.IsZoneWeatherEnabled)
+RegisterExport('IsZoneWeatherEnabled', Ak47TimeSync.Client.IsZoneWeatherEnabled)
+RegisterExport('getCurrentZone', Ak47TimeSync.Client.GetCurrentZone)
+RegisterExport('GetCurrentZone', Ak47TimeSync.Client.GetCurrentZone)
+RegisterExport('getZoneWeather', Ak47TimeSync.Client.GetZoneWeather)
+RegisterExport('GetZoneWeather', Ak47TimeSync.Client.GetZoneWeather)
+RegisterExport('isInsideChiliad', Ak47TimeSync.Client.IsInsideChiliad)
+RegisterExport('IsInsideChiliad', Ak47TimeSync.Client.IsInsideChiliad)
+

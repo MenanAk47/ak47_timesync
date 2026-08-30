@@ -248,12 +248,60 @@ function Ak47TimeSync.Server.SetSnowTracks(source, state)
     return SyncState.snowTracks == true
 end
 
+--- Returns whether zone-based weather mode is enabled
+--- @return boolean
+function Ak47TimeSync.Server.IsZoneWeatherEnabled()
+    return SyncState and (SyncState.zoneWeatherEnabled == true) or (ZoneWeather and ZoneWeather.enabled == true) or false
+end
+
+--- Set or toggle zone-based weather mode
+--- @param source number Source of change
+--- @param state boolean|nil True/false to set, or nil to toggle
+--- @return boolean New state
+function Ak47TimeSync.Server.SetZoneWeatherEnabled(source, state)
+    if ZoneWeather and ZoneWeather.SetEnabled then
+        return ZoneWeather.SetEnabled(source or 0, state)
+    end
+    return false
+end
+
+--- Set weather for a specific zone or ALL zones
+--- @param source number Source of change
+--- @param zoneId string Zone identifier or 'ALL'
+--- @param weatherType string Weather condition
+--- @param transitionDuration number Optional blend seconds
+--- @param instant boolean True for instant snap
+--- @return boolean Success
+function Ak47TimeSync.Server.SetZoneWeather(source, zoneId, weatherType, transitionDuration, instant)
+    if ZoneWeather and ZoneWeather.SetZoneWeather then
+        return ZoneWeather.SetZoneWeather(source or 0, zoneId, weatherType, transitionDuration, instant)
+    end
+    return false
+end
+
+--- Returns weather state for a specific zone
+--- @param zoneId string Zone identifier
+--- @return string Weather name
+function Ak47TimeSync.Server.GetZoneWeather(zoneId)
+    if ZoneWeather and ZoneWeather.zones and ZoneWeather.zones[zoneId] then
+        return ZoneWeather.zones[zoneId].current
+    end
+    return Ak47TimeSync.Server.GetWeather()
+end
+
+--- Returns all zone states
+--- @return table
+function Ak47TimeSync.Server.GetAllZoneWeathers()
+    return ZoneWeather and ZoneWeather.zones or {}
+end
+
 --- Advances to next probabilistic weather stage
 --- @param source number Source of the change
 function Ak47TimeSync.Server.NextWeatherStage(source)
     local nextW = SyncState.nextWeather or (WeatherCycles and WeatherCycles.GetNextWeather and WeatherCycles.GetNextWeather(SyncState.weather)) or 'CLEAR'
     SyncState.SetWeather(source or 0, nextW, Config.DefaultWeatherTransitionSpeed or 10, false)
 end
+
 
 --- Returns an easytime-compatible weather state table with string metatable
 --- @return table
@@ -380,3 +428,15 @@ RegisterExport('getRealData', Ak47TimeSync.Server.GetRealWorldData)
 RegisterExport('GetRealData', Ak47TimeSync.Server.GetRealWorldData)
 RegisterExport('getPauseSyncState', function() return false end)
 RegisterExport('GetPauseSyncState', function() return false end)
+
+RegisterExport('isZoneWeatherEnabled', Ak47TimeSync.Server.IsZoneWeatherEnabled)
+RegisterExport('IsZoneWeatherEnabled', Ak47TimeSync.Server.IsZoneWeatherEnabled)
+RegisterExport('setZoneWeatherEnabled', function(s) return Ak47TimeSync.Server.SetZoneWeatherEnabled(0, s) end)
+RegisterExport('SetZoneWeatherEnabled', function(s) return Ak47TimeSync.Server.SetZoneWeatherEnabled(0, s) end)
+RegisterExport('setZoneWeather', function(z, w, d, i) return Ak47TimeSync.Server.SetZoneWeather(0, z, w, d, i) end)
+RegisterExport('SetZoneWeather', function(z, w, d, i) return Ak47TimeSync.Server.SetZoneWeather(0, z, w, d, i) end)
+RegisterExport('getZoneWeather', Ak47TimeSync.Server.GetZoneWeather)
+RegisterExport('GetZoneWeather', Ak47TimeSync.Server.GetZoneWeather)
+RegisterExport('getAllZoneWeathers', Ak47TimeSync.Server.GetAllZoneWeathers)
+RegisterExport('GetAllZoneWeathers', Ak47TimeSync.Server.GetAllZoneWeathers)
+

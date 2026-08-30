@@ -60,6 +60,156 @@ Config.DefaultWindSpeed = 0.0               -- Default wind speed (0 - 12 m/s)
 Config.DefaultWindDirection = 0.0           -- Default wind direction (0 - 360 degrees)
 Config.DefaultRainLevel = -1.0              -- Default rain level override (-1.0 = auto/game weather default, 0.0 - 1.0 = manual override)
 
+-- ====================================================================
+-- ZONE-BASED WEATHER SETTINGS (Powered by ak47_lib Lib47.Zones.Poly)
+-- ====================================================================
+Config.ZoneWeather = {
+    Enabled = true,                        -- Toggle zone-based weather mode by default (can be toggled via UI)
+    TransitionDuration = 12,                -- Blend duration in seconds when crossing zone boundaries
+    CheckInterval = 750,                    -- Interval in ms for client spatial checks
+    Debug = false,                          -- Set to true to draw 3D wireframe boxes for testing zone boundaries
+
+
+    -- Mount Chiliad "Mount Everest" Alpine Altitude System
+    MountChiliad = {
+        enabled = true,
+        points = {
+            vec3(-350.0, 4900.0, 0.0),
+            vec3(1000.0, 4900.0, 0.0),
+            vec3(1000.0, 6200.0, 0.0),
+            vec3(-350.0, 6200.0, 0.0),
+        },
+        minZ = 300.0,
+        maxZ = 1200.0,
+        tiers = {
+            { minZ = 350.0, maxZ = 550.0, weather = 'FOGGY', label = 'Alpine Mist', windSpeed = 5.0, snowTracks = false },
+            { minZ = 550.0, maxZ = 700.0, weather = 'SNOWLIGHT', label = 'Sub-Zero Snow', windSpeed = 8.0, snowTracks = true },
+            { minZ = 700.0, maxZ = 1200.0, weather = 'BLIZZARD', label = 'Everest Summit Blizzard', windSpeed = 12.0, snowTracks = true },
+        },
+    },
+
+    -- The 7 Seamless Geographic Map PolyZones
+    Zones = {
+        {
+            id = 'LS_SOUTH',
+            label = 'Los Santos South & Harbor',
+            category = 'Urban Metro',
+            icon = 'Anchor',
+            color = 'blue',
+            points = {
+                vec3(-3800.0, -3800.0, 0.0),
+                vec3(4200.0, -3800.0, 0.0),
+                vec3(4200.0, -1000.0, 0.0),
+                vec3(-3800.0, -1000.0, 0.0),
+            },
+            minZ = -200.0,
+            maxZ = 2000.0,
+            biome = 'coastal_urban',
+        },
+        {
+            id = 'LS_NORTH',
+            label = 'Los Santos North & Hills',
+            category = 'Urban Metro',
+            icon = 'Building2',
+            color = 'amber',
+            points = {
+                vec3(-1900.0, -1000.0, 0.0),
+                vec3(1200.0, -1000.0, 0.0),
+                vec3(1200.0, 1100.0, 0.0),
+                vec3(-1900.0, 1100.0, 0.0),
+            },
+            minZ = -200.0,
+            maxZ = 2000.0,
+            biome = 'urban_hills',
+        },
+        {
+            id = 'EAST_COAST',
+            label = 'East Coast & Foothills',
+            category = 'Coastal Foothills',
+            icon = 'Waves',
+            color = 'cyan',
+            points = {
+                vec3(1200.0, -1000.0, 0.0),
+                vec3(4200.0, -1000.0, 0.0),
+                vec3(4200.0, 2400.0, 0.0),
+                vec3(1200.0, 2400.0, 0.0),
+            },
+            minZ = -200.0,
+            maxZ = 2000.0,
+            biome = 'maritime',
+        },
+        {
+            id = 'WEST_VALLEYS',
+            label = 'Western Canyons & Foothills',
+            category = 'Canyon & Valley',
+            icon = 'Mountain',
+            color = 'emerald',
+            points = {
+                vec3(-3800.0, -1000.0, 0.0),
+                vec3(-1900.0, -1000.0, 0.0),
+                vec3(-1900.0, 1100.0, 0.0),
+                vec3(-400.0, 1100.0, 0.0),
+                vec3(-400.0, 2600.0, 0.0),
+                vec3(-3800.0, 2600.0, 0.0),
+            },
+            minZ = -200.0,
+            maxZ = 2000.0,
+            biome = 'canyon',
+        },
+        {
+            id = 'DESERT',
+            label = 'Grand Senora Desert',
+            category = 'Arid Desert',
+            icon = 'SunMedium',
+            color = 'yellow',
+            points = {
+                vec3(-400.0, 1100.0, 0.0),
+                vec3(4200.0, 1100.0, 0.0),
+                vec3(4200.0, 3600.0, 0.0),
+                vec3(-400.0, 3600.0, 0.0),
+            },
+            minZ = -200.0,
+            maxZ = 2000.0,
+            biome = 'arid_desert',
+        },
+        {
+            id = 'GRAPESEED_ALAMO',
+            label = 'Alamo Sea & Farmlands',
+            category = 'Lakeside & Rural',
+            icon = 'Tractor',
+            color = 'orange',
+            points = {
+                vec3(-400.0, 3600.0, 0.0),
+                vec3(4200.0, 3600.0, 0.0),
+                vec3(4200.0, 5200.0, 0.0),
+                vec3(-400.0, 5200.0, 0.0),
+            },
+            minZ = -200.0,
+            maxZ = 2000.0,
+            biome = 'rural_lakeside',
+        },
+        {
+            id = 'PALETO_WILDERNESS',
+            label = 'Paleto Wilderness & North Coast',
+            category = 'Sub-Alpine Forest',
+            icon = 'Trees',
+            color = 'teal',
+            points = {
+                vec3(-3800.0, 2600.0, 0.0),
+                vec3(-400.0, 2600.0, 0.0),
+                vec3(-400.0, 5200.0, 0.0),
+                vec3(4200.0, 5200.0, 0.0),
+                vec3(4200.0, 7800.0, 0.0),
+                vec3(-3800.0, 7800.0, 0.0),
+            },
+            minZ = -200.0,
+            maxZ = 2000.0,
+            biome = 'subalpine_forest',
+        },
+    },
+}
+
+
 
 Presets = {}
 

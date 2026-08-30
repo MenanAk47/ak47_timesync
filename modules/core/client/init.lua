@@ -25,6 +25,16 @@ RegisterNetEvent('ak47_timesync:client:syncState', function(state, forcedInstant
     ClientWeather.snowTracks = state.snowTracks == true
     ClientWeather.next = state.nextWeather or 'CLEAR'
     ClientWeather.rainLevel = tonumber(state.rainLevel) or -1.0
+    if state.windSpeed ~= nil then ClientWeather.windSpeed = tonumber(state.windSpeed) or 0.0 end
+    if state.windDirection ~= nil then ClientWeather.windDirection = tonumber(state.windDirection) or 0.0 end
+
+    if state.zoneWeatherEnabled ~= nil and ClientZoneWeather then
+        ClientZoneWeather.enabled = state.zoneWeatherEnabled == true
+        ClientZoneWeather.zones = state.zones or ClientZoneWeather.zones
+        if ClientZoneWeather.EvaluateActiveZone then
+            ClientZoneWeather.EvaluateActiveZone(true, forcedInstant)
+        end
+    end
 
     local isPaused = (ClientTime and ClientTime.paused) or (PauseSync and PauseSync.state)
 
@@ -36,13 +46,21 @@ RegisterNetEvent('ak47_timesync:client:syncState', function(state, forcedInstant
             SmoothChangeTime(state, state.transitionDuration or 5)
         end
 
-        ApplyClientWeather(state.weather, state.transitionDuration or 10, forcedInstant)
+        if not (ClientZoneWeather and ClientZoneWeather.enabled) then
+            ApplyClientWeather(state.weather, state.transitionDuration or 10, forcedInstant)
+        end
         ApplyClientBlackout(state.blackout == true)
         ApplyClientRainLevel(state.rainLevel)
+        if state.windSpeed ~= nil then
+            SetWind(ClientWeather.windSpeed + 0.0)
+            SetWindSpeed(ClientWeather.windSpeed + 0.0)
+            SetWindDirection(ClientWeather.windDirection + 0.0)
+        end
     end
 
     SendUiUpdate(state)
 end)
+
 
 RegisterNetEvent('ak47_timesync:client:openAdminMenu', function(initialState)
     if isUiOpen then return end
@@ -87,6 +105,11 @@ CreateThread(function()
     TriggerEvent('chat:addSuggestion', '/freezetime', _U('cmd_freezetime_desc'))
     TriggerEvent('chat:addSuggestion', '/freezeweather', _U('cmd_freezeweather_desc'))
     TriggerEvent('chat:addSuggestion', '/blackout', _U('cmd_blackout_desc'))
+    TriggerEvent('chat:addSuggestion', '/zoneweather', _U('cmd_zoneweather_desc'), {
+        { name = 'zoneId', help = _U('cmd_zoneweather_zone_param') },
+        { name = 'weather', help = _U('cmd_zoneweather_type_param') },
+    })
+    TriggerEvent('chat:addSuggestion', '/zonedebug', 'Toggle Zone Weather debug mode and print current zone/weather info')
     TriggerEvent('chat:addSuggestion', '/morning', _U('cmd_morning_desc'))
     TriggerEvent('chat:addSuggestion', '/noon', _U('cmd_noon_desc'))
     TriggerEvent('chat:addSuggestion', '/evening', _U('cmd_evening_desc'))
@@ -102,6 +125,8 @@ AddEventHandler('onResourceStop', function(resourceName)
         TriggerEvent('chat:removeSuggestion', '/timesync')
         TriggerEvent('chat:removeSuggestion', '/time')
         TriggerEvent('chat:removeSuggestion', '/weather')
+        TriggerEvent('chat:removeSuggestion', '/zoneweather')
+        TriggerEvent('chat:removeSuggestion', '/zonedebug')
         TriggerEvent('chat:removeSuggestion', '/freezetime')
         TriggerEvent('chat:removeSuggestion', '/freezeweather')
         TriggerEvent('chat:removeSuggestion', '/blackout')
@@ -111,4 +136,5 @@ AddEventHandler('onResourceStop', function(resourceName)
         TriggerEvent('chat:removeSuggestion', '/night')
     end
 end)
+
 

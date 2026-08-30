@@ -13,12 +13,15 @@ High-performance, modern Time and Weather synchronization resource for FiveM wit
 
 - **Smooth Clock Transitions:** Interpolates in-game clock across the shortest 24h circular path.
 - **Probabilistic Dynamic Weather:** Realistic Markov-chain weather forecast cycles with weighted transitions.
+- **Zone-Based Dynamic Weather:** Partitions San Andreas into 7 seamless geographic PolyZones powered by `ak47_lib` (`Lib47.Zones.Poly`) with meteorological front propagation (`Current`, `Next`, and `Previous` wave states).
+- **Mount Chiliad Alpine Everest Elevation:** Multi-tier height-based weather layer scaling smoothly into high-altitude fog, sub-zero snow, and summit whiteout blizzards ($Z > 700\text{m}$).
 - **Environmental Controls:** City-wide blackout, persistent snow tracks/footprints, wind speed and heading physics.
-- **Modern NUI Admin Center:** Sleek React 18 + Tailwind UI with sound feedback, instant presets, and fine sliders.
+- **Modern NUI Admin Center:** Sleek React 18 + Tailwind UI with live zone overview chips, zone weather toggle, sound feedback, instant presets, and fine sliders.
 - **Multi-Framework Permission System:** Native support for Ace Permissions, ESX, QBCore, Qbox, License, or Identifiers.
 - **Discord Webhook Logging:** Embedded logs for time, weather, blackout, and freeze modifications.
 - **100% Drop-In Replacement:** Provides native export & event compatibility for `qb-weathersync`, `qbx_weathersync`, `cd_easytime`, `vSync`, and `vSyncR`.
-- **Ultra Low Resmon:** `0.00ms` idle client execution.
+- **Ultra Low Resmon:** `0.00ms` idle client execution (leveraging C-level GLM spatial grids).
+
 
 ---
 
@@ -63,7 +66,9 @@ Admin.WithGroup = {
 | :--- | :--- | :--- |
 | `/timesync` | None | Open Time & Weather Admin Panel UI |
 | `/weather` | `<WEATHER_TYPE>` | Set weather (`CLEAR`, `EXTRASUNNY`, `RAIN`, `THUNDER`, `XMAS`, etc.) |
+| `/zoneweather` | `<zoneId\|ALL> <WEATHER_TYPE>` | Set weather for a specific zone (`LS_SOUTH`, `DESERT`, `MOUNT_CHILIAD`, etc.) |
 | `/time` | `<hour> [minute]` | Set server clock time (0-23, 0-59) |
+
 | `/freezetime` | None | Toggle global clock freeze |
 | `/freezeweather` | None | Toggle global weather freeze |
 | `/blackout` | None | Toggle city blackout mode |
@@ -102,6 +107,11 @@ exports['ak47_timesync']:SetDynamicWeather(true)     -- Enable dynamic cycling
 exports['ak47_timesync']:SetSnowTracks(true)         -- Enable snow tracks
 exports['ak47_timesync']:SetRainLevel(0.8)           -- Override rain intensity (-1.0 = auto, 0.0 - 1.0 = custom)
 
+-- Zone-Based Weather Exports (Server)
+exports['ak47_timesync']:SetZoneWeatherEnabled(true)                     -- Enable 7-Zone Dynamic Weather
+exports['ak47_timesync']:SetZoneWeather('DESERT', 'THUNDER', 10, false)  -- Set specific zone weather
+local allZones = exports['ak47_timesync']:GetAllZoneWeathers()           -- Get all zone states
+
 -- Full Snapshot
 local state = exports['ak47_timesync']:GetFullState()
 ```
@@ -117,7 +127,13 @@ local weather = exports['ak47_timesync']:GetWeather()
 local isBlackout = exports['ak47_timesync']:GetBlackout()
 local rainLevel = exports['ak47_timesync']:GetRainLevel()
 
+-- Zone-Based Weather Queries (Client)
+local isZoneMode = exports['ak47_timesync']:IsZoneWeatherEnabled()
+local zoneId, zoneLabel = exports['ak47_timesync']:GetCurrentZone()      -- e.g. 'DESERT', 'Grand Senora Desert'
+local isInsideChiliad, tier = exports['ak47_timesync']:IsInsideChiliad() -- true if on Mount Chiliad elevation
+
 -- Pause Sync Locally (for clothing stores, apartment cutscenes, etc.)
+
 exports['ak47_timesync']:SetPauseSync(true, 20) -- pauses sync and sets client hour to 20:00
 exports['ak47_timesync']:SetPauseSync(false)    -- resumes server sync
 

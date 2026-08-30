@@ -1,11 +1,12 @@
 fx_version 'cerulean'
 game 'gta5'
 description 'Ak47 Time & Weather Sync'
-version '1.0.1'
+version '1.2.0'
 author 'MenanAk47'
 lua54 'yes'
 
 ui_page 'web/index.html'
+--ui_page 'http://localhost:5173'
 
 files {
     'web/**/*',

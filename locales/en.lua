@@ -97,4 +97,21 @@ Locales['en'] = {
     ['dir_east'] = 'East',
     ['dir_south'] = 'South',
     ['dir_west'] = 'West',
+
+    -- Zone Weather & Mount Chiliad
+    ['zone_weather_toggled'] = 'Zone-based weather mode has been %s.',
+    ['zone_weather_updated'] = 'Zone %s weather set to %s.',
+    ['cmd_zoneweather_desc'] = 'Set weather for a specific map zone',
+    ['cmd_zoneweather_zone_param'] = 'Zone ID (e.g. LS_SOUTH, DESERT, MOUNT_CHILIAD)',
+    ['cmd_zoneweather_type_param'] = 'Weather Type (e.g. RAIN, CLEAR, BLIZZARD)',
+    ['ui_zone_weather_mode'] = 'Zone Weather',
+    ['ui_zone_mode_on'] = 'Zones: ON',
+    ['ui_zone_mode_off'] = 'Zones: OFF',
+    ['ui_zone_overview'] = 'Geographic Map Zones & Microclimates',
+    ['ui_zone_current_location'] = 'You Are Here',
+    ['ui_apply_to_all_zones'] = 'Apply All Zones',
+    ['ui_apply_selected_zone'] = 'Apply to Zone',
+    ['ui_all_zones'] = 'All Zones (Global)',
+    ['ui_elevation_chiliad'] = 'Mt. Chiliad Summit',
 }
+
