@@ -34,6 +34,21 @@ function Ak47TimeSync.Client.GetTimeTuple()
     return h, m
 end
 
+--- Returns current milliseconds per game minute
+--- @return number
+function Ak47TimeSync.Client.GetMinuteDuration()
+    return ClientTime and ClientTime.minuteDuration or 2000
+end
+
+--- Set local timescale duration in milliseconds per game minute
+--- @param duration number Milliseconds per game minute
+function Ak47TimeSync.Client.SetMinuteDuration(duration)
+    local d = tonumber(duration) or 2000
+    if SetGameMinuteDuration then
+        SetGameMinuteDuration(d)
+    end
+end
+
 --- Returns current weather type string
 --- @return string Weather name (e.g. 'CLEAR')
 function Ak47TimeSync.Client.GetWeather()
@@ -124,6 +139,7 @@ function Ak47TimeSync.Client.GetFullState()
         hours = ClientTime and ClientTime.hours or 12,
         mins = ClientTime and ClientTime.mins or 0,
         seconds = ClientTime and ClientTime.seconds or 0,
+        minuteDuration = ClientTime and ClientTime.minuteDuration or 2000,
         freezeTime = Ak47TimeSync.Client.IsTimeFrozen(),
         weather = Ak47TimeSync.Client.GetWeather(),
         nextWeather = Ak47TimeSync.Client.GetNextWeather(),
@@ -176,6 +192,9 @@ function Ak47TimeSync.Client.SetPauseSync(state, overrideHour)
         end)
     else
         Wait(300)
+        if SetGameMinuteDuration then
+            SetGameMinuteDuration(ClientTime and ClientTime.minuteDuration or 2000)
+        end
         TriggerServerEvent('ak47_timesync:server:requestSync')
     end
 end
@@ -225,6 +244,10 @@ RegisterExport('getTime', Ak47TimeSync.Client.GetTime)
 RegisterExport('GetTime', Ak47TimeSync.Client.GetTime)
 RegisterExport('getTimeState', Ak47TimeSync.Client.GetTime)
 RegisterExport('GetTimeState', Ak47TimeSync.Client.GetTime)
+RegisterExport('getMinuteDuration', Ak47TimeSync.Client.GetMinuteDuration)
+RegisterExport('GetMinuteDuration', Ak47TimeSync.Client.GetMinuteDuration)
+RegisterExport('setMinuteDuration', Ak47TimeSync.Client.SetMinuteDuration)
+RegisterExport('SetMinuteDuration', Ak47TimeSync.Client.SetMinuteDuration)
 
 RegisterExport('getWeather', Ak47TimeSync.Client.GetWeather)
 RegisterExport('GetWeather', Ak47TimeSync.Client.GetWeatherObject)

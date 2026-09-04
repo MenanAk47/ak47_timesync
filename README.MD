@@ -11,7 +11,7 @@ High-performance, modern Time and Weather synchronization resource for FiveM wit
 
 ## ⚡ Features
 
-- **Smooth Clock Transitions:** Interpolates in-game clock across the shortest 24h circular path.
+- **Smooth Clock Transitions & Custom Timescales:** Interpolates in-game clock across the shortest 24h circular path with full support for custom timescales (e.g. `Config.MinuteDuration = 60000` for 1:1 real-time 24h cycle) and zero clock/sky snapping.
 - **Probabilistic Dynamic Weather:** Realistic Markov-chain weather forecast cycles with weighted transitions.
 - **Zone-Based Dynamic Weather:** Partitions San Andreas into 7 seamless geographic PolyZones powered by `ak47_lib` (`Lib47.Zones.Poly`) with meteorological front propagation (`Current`, `Next`, and `Previous` wave states).
 - **Mount Chiliad Alpine Everest Elevation:** Multi-tier height-based weather layer scaling smoothly into high-altitude fog, sub-zero snow, and summit whiteout blizzards ($Z > 700\text{m}$).
@@ -91,6 +91,10 @@ print(('Current Time: %02d:%02d'):format(time.hour, time.minute))
 -- Set Time (hours, mins, seconds, transitionSpeedSec, instantSnap)
 exports['ak47_timesync']:SetTime(12, 0, 0, 5, false)
 
+-- Timescale / Minute Duration (ms per in-game minute)
+local durationMs = exports['ak47_timesync']:GetMinuteDuration() -- returns ms (default 2000)
+exports['ak47_timesync']:SetMinuteDuration(60000)               -- set to 60000 for 1:1 real-time sync
+
 -- Get & Set Weather
 local weather = exports['ak47_timesync']:GetWeather() -- returns string (e.g. 'CLEAR')
 exports['ak47_timesync']:SetWeather('RAIN', 10, false) -- weather, durationSeconds, instant
@@ -119,8 +123,9 @@ local state = exports['ak47_timesync']:GetFullState()
 ### Client-Side Exports
 
 ```lua
--- Get Time
+-- Get Time & Timescale
 local time = exports['ak47_timesync']:GetTime()
+local minuteDuration = exports['ak47_timesync']:GetMinuteDuration()
 
 -- Get Weather, Blackout & Rain
 local weather = exports['ak47_timesync']:GetWeather()

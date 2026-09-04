@@ -19,7 +19,12 @@ RegisterNetEvent('ak47_timesync:client:syncState', function(state, forcedInstant
     ClientTime.hours = state.hours
     ClientTime.mins = state.mins
     ClientTime.seconds = state.seconds or 0
+    ClientTime.minuteDuration = state.minuteDuration or Config.MinuteDuration or 2000
     ClientTime.freeze = state.freezeTime == true
+
+    if SetGameMinuteDuration then
+        SetGameMinuteDuration(ClientTime.minuteDuration)
+    end
 
     ClientWeather.freeze = state.freezeWeather == true
     ClientWeather.snowTracks = state.snowTracks == true

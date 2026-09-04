@@ -145,6 +145,12 @@ function SyncState.SetTime(source, hours, mins, seconds, transitionSpeed, forced
     TriggerEvent('ak47_timesync:server:onTimeChanged', source, SyncState.hours, SyncState.mins, speed)
 end
 
+function SyncState.SetMinuteDuration(source, duration)
+    SyncState.minuteDuration = tonumber(duration) or 2000
+    TriggerClientEvent('ak47_timesync:client:setMinuteDuration', -1, SyncState.minuteDuration)
+    TriggerEvent('ak47_timesync:server:onMinuteDurationChanged', source, SyncState.minuteDuration)
+end
+
 function SyncState.SetWeather(source, weatherType, transitionDuration, forcedInstant)
     weatherType = string.upper(tostring(weatherType))
     SyncState.weather = weatherType

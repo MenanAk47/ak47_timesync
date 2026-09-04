@@ -169,6 +169,23 @@ function Ak47TimeSync.Server.SetTime(source, hours, mins, seconds, transitionSpe
     return true
 end
 
+--- Set milliseconds per game minute
+--- @param source number Source of the change (0 for console/server)
+--- @param duration number Milliseconds per game minute
+--- @return boolean Success
+function Ak47TimeSync.Server.SetMinuteDuration(source, duration)
+    local d = tonumber(duration)
+    if not d or d <= 0 then return false end
+    SyncState.SetMinuteDuration(source or 0, d)
+    return true
+end
+
+--- Returns current milliseconds per game minute
+--- @return number
+function Ak47TimeSync.Server.GetMinuteDuration()
+    return SyncState and SyncState.minuteDuration or 2000
+end
+
 --- Set server weather
 --- @param source number Source of the change (0 for console/server)
 --- @param weatherType string Weather condition name
@@ -354,6 +371,10 @@ RegisterExport('getTimeState', Ak47TimeSync.Server.GetTime)
 RegisterExport('GetTimeState', Ak47TimeSync.Server.GetTime)
 RegisterExport('setTime', function(h, m, s, spd, inst) return Ak47TimeSync.Server.SetTime(0, h, m, s, spd, inst) end)
 RegisterExport('SetTime', function(h, m, s, spd, inst) return Ak47TimeSync.Server.SetTime(0, h, m, s, spd, inst) end)
+RegisterExport('getMinuteDuration', Ak47TimeSync.Server.GetMinuteDuration)
+RegisterExport('GetMinuteDuration', Ak47TimeSync.Server.GetMinuteDuration)
+RegisterExport('setMinuteDuration', function(d) return Ak47TimeSync.Server.SetMinuteDuration(0, d) end)
+RegisterExport('SetMinuteDuration', function(d) return Ak47TimeSync.Server.SetMinuteDuration(0, d) end)
 
 RegisterExport('getWeather', Ak47TimeSync.Server.GetWeather)
 RegisterExport('GetWeather', Ak47TimeSync.Server.GetWeatherObject)

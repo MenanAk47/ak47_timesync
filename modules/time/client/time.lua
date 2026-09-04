@@ -6,6 +6,7 @@ ClientTime = {
     hours = 12,
     mins = 0,
     seconds = 0,
+    minuteDuration = 2000,
     freeze = false,
     paused = false,
     isTransitioning = false,
@@ -13,6 +14,21 @@ ClientTime = {
 }
 
 local transitionThreadId = 0
+
+--- Sets the client engine timescale for game minutes
+--- @param ms number Milliseconds per game minute
+function SetGameMinuteDuration(ms)
+    local duration = tonumber(ms) or 2000
+    if duration <= 0 then duration = 2000 end
+    ClientTime.minuteDuration = duration
+
+    if NetworkOverrideClockMillisecondsPerGameMinute then
+        pcall(NetworkOverrideClockMillisecondsPerGameMinute, duration)
+    end
+    if SetMillisecondsPerGameMinute then
+        pcall(SetMillisecondsPerGameMinute, duration)
+    end
+end
 
 --- Smoothly interpolates the in-game clock from current time to target time
 --- @param data table { hours: number, mins: number, seconds: number }
@@ -115,8 +131,14 @@ RegisterNetEvent('ak47_timesync:client:setFreezeTime', function(state)
     SendUiUpdate({ freezeTime = state == true })
 end)
 
+-- Network Event: Set Minute Duration
+RegisterNetEvent('ak47_timesync:client:setMinuteDuration', function(duration)
+    SetGameMinuteDuration(duration)
+end)
+
 -- Client Clock Lock Thread (Enforces frozen time)
 CreateThread(function()
+    SetGameMinuteDuration(Config.MinuteDuration or 2000)
     while true do
         if ClientTime.freeze and not ClientTime.paused then
             NetworkOverrideClockTime(ClientTime.hours, ClientTime.mins, ClientTime.seconds)
