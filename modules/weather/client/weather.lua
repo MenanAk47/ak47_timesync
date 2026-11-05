@@ -68,6 +68,7 @@ end
 RegisterNetEvent('ak47_timesync:client:updateWeather', function(data, forcedInstant)
     if ClientWeather.paused then return end
     ClientWeather.next = data.nextWeather or ClientWeather.next
+    ClientWeather.global = data.weather
     if not (ClientZoneWeather and ClientZoneWeather.enabled) then
         ApplyClientWeather(data.weather, data.transitionDuration or 10, forcedInstant or false)
     end

@@ -29,6 +29,7 @@ RegisterNetEvent('ak47_timesync:client:syncState', function(state, forcedInstant
     ClientWeather.freeze = state.freezeWeather == true
     ClientWeather.snowTracks = state.snowTracks == true
     ClientWeather.next = state.nextWeather or 'CLEAR'
+    ClientWeather.global = state.weather
     ClientWeather.rainLevel = tonumber(state.rainLevel) or -1.0
     if state.windSpeed ~= nil then ClientWeather.windSpeed = tonumber(state.windSpeed) or 0.0 end
     if state.windDirection ~= nil then ClientWeather.windDirection = tonumber(state.windDirection) or 0.0 end
