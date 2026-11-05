@@ -113,7 +113,7 @@ function ClientZoneWeather.GetZoneAtCoords(coords)
 end
 
 --- Update active zone and apply weather smoothly
-local function UpdateCurrentZoneLocation(forceApply)
+local function UpdateCurrentZoneLocation(forceApply, forcedInstant)
     local ped = PlayerPedId()
     local coords = GetEntityCoords(ped)
 
@@ -289,7 +289,7 @@ RegisterNetEvent('ak47_timesync:client:syncZoneWeather', function(data)
     ClientZoneWeather.zones = data.zones or ClientZoneWeather.zones
 
     if ClientZoneWeather.enabled then
-        UpdateCurrentZoneLocation(true)
+        UpdateCurrentZoneLocation(true, data.instant == true)
     elseif wasEnabled and not ClientZoneWeather.enabled then
         -- Reset back to global master weather
         ClientZoneWeather.chiliadTier = 0
@@ -298,8 +298,8 @@ RegisterNetEvent('ak47_timesync:client:syncZoneWeather', function(data)
         SetWind(baseWind + 0.0)
         SetWindSpeed(baseWind + 0.0)
         SetWindDirection(baseWindDir + 0.0)
-        if ClientWeather and ClientWeather.current then
-            ApplyClientWeather(ClientWeather.current, 10, false)
+        if ClientWeather and (ClientWeather.global or ClientWeather.current) then
+            ApplyClientWeather(ClientWeather.global or ClientWeather.current, 10, false)
         end
     end
 

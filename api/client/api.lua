@@ -179,11 +179,14 @@ function Ak47TimeSync.Client.SetPauseSync(state, overrideHour)
         PauseSync.hours = overrideHour or 20
     end
 
+    if isPaused then
+        ApplyClientWeather('EXTRASUNNY', 0, true)
+    end
+
     if ClientTime then ClientTime.paused = isPaused end
     if ClientWeather then ClientWeather.paused = isPaused end
 
     if isPaused then
-        ApplyClientWeather('EXTRASUNNY', 0, true)
         CreateThread(function()
             while PauseSync and PauseSync.state do
                 Wait(0)

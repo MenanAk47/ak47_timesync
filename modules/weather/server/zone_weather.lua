@@ -110,12 +110,13 @@ function ZoneWeather.AdvanceFront()
 end
 
 --- Broadcast zone state table to all clients or a specific source
-function ZoneWeather.Broadcast(targetSource)
+function ZoneWeather.Broadcast(targetSource, forcedInstant)
     local target = targetSource or -1
     TriggerClientEvent('ak47_timesync:client:syncZoneWeather', target, {
         enabled = ZoneWeather.enabled,
         zones = ZoneWeather.zones,
         transitionDuration = Config.ZoneWeather.TransitionDuration or 12,
+        instant = forcedInstant == true,
     })
 end
 
@@ -157,7 +158,7 @@ function ZoneWeather.SetZoneWeather(source, zoneId, weatherType, transitionDurat
         end
     end
 
-    ZoneWeather.Broadcast()
+    ZoneWeather.Broadcast(nil, forcedInstant)
     TriggerEvent('ak47_timesync:server:onZoneWeatherChanged', source, zoneId, weatherType, duration)
     return true
 end

@@ -63,7 +63,7 @@ RegisterNetEvent('cd_easytime:SyncWeather', function(weather, instant)
     if Ak47TimeSync.Client.IsSyncPaused() or Ak47TimeSync.Client.IsZoneWeatherEnabled() then return end
     local w = type(weather) == 'table' and weather.weather or weather
     local inst = type(weather) == 'table' and weather.instantweather or instant
-    if w then
+    if w and string.upper(tostring(w)) ~= ClientWeather.current then
         ApplyClientWeather(w, inst and 0 or 10, inst == true)
     end
 end)
@@ -71,7 +71,7 @@ end)
 for _, evt in ipairs({'vSync:updateWeather', 'qb-weathersync:client:SyncWeather'}) do
     RegisterNetEvent(evt, function(weather, blackout)
         if Ak47TimeSync.Client.IsSyncPaused() then return end
-        if not Ak47TimeSync.Client.IsZoneWeatherEnabled() and weather then
+        if not Ak47TimeSync.Client.IsZoneWeatherEnabled() and weather and string.upper(tostring(weather)) ~= ClientWeather.current then
             ApplyClientWeather(weather, 10, false)
         end
         if blackout ~= nil then

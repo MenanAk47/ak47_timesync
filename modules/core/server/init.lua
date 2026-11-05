@@ -18,7 +18,7 @@ SyncState = {
     freezeWeather = Config.FreezeWeather or false,
     blackout = Config.Blackout or false,
     snowTracks = Config.SnowOnGround or false,
-    dynamicCycle = Config.DynamicWeather or true,
+    dynamicCycle = Config.DynamicWeather ~= false,
     newWeatherTimer = Config.NewWeatherTimer or 10,
 
     windSpeed = Config.DefaultWindSpeed or 0.0,

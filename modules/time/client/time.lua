@@ -48,6 +48,10 @@ function SmoothChangeTime(data, transition_speed)
         return
     end
 
+    if ClientTime.isTransitioning and ClientTime.targetHours == data.hours and ClientTime.targetMins == data.mins then return end
+    ClientTime.targetHours = data.hours
+    ClientTime.targetMins = data.mins
+
     -- Interrupt any previous transition
     transitionThreadId = transitionThreadId + 1
     local currentThread = transitionThreadId
