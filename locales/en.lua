@@ -31,6 +31,7 @@ Locales['en'] = {
     ['ui_subtitle'] = 'Server Environment Control Center',
     ['ui_tab_time'] = 'Time Controls',
     ['ui_tab_weather'] = 'Weather Controls',
+    ['ui_tab_zones'] = 'Zone Climates',
     ['ui_tab_environment'] = 'Environment & FX',
     ['ui_close'] = 'Close',
     ['ui_selected'] = 'Selected:',

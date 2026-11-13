@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 description 'Ak47 Time & Weather Sync'
-version '1.3.0'
+version '1.4.0'
 author 'MenanAk47'
 lua54 'yes'
 

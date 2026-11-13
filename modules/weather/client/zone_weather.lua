@@ -206,58 +206,97 @@ end
 ClientZoneWeather.EvaluateActiveZone = UpdateCurrentZoneLocation
 ClientZoneWeather.UpdateCurrentZoneLocation = UpdateCurrentZoneLocation
 
--- On-demand initialization of Lib47.Zones.Poly instances for 3D Debugging visualization
+-- On-demand initialization / cleanup of Lib47.Zones.Poly instances for 3D Debugging visualization
 local polyZonesInitialized = false
-local function InitDebugPolyZones()
-    if polyZonesInitialized or not Lib47 or not Lib47.Zones or not Lib47.Zones.Poly then
+
+local function SetDebugPolyZones(enabled)
+    if not Lib47 or not Lib47.Zones or not Lib47.Zones.Poly then
         return
     end
 
-    local isDebug = Config.ZoneWeather and Config.ZoneWeather.Debug == true
+    if enabled then
+        if not polyZonesInitialized then
+            -- Initialize Mount Chiliad PolyZone with debug rendering
+            if Config.ZoneWeather and Config.ZoneWeather.MountChiliad then
+                local mc = Config.ZoneWeather.MountChiliad
+                ClientZoneWeather.chiliadZone = Lib47.Zones.Poly({
+                    name = 'MOUNT_CHILIAD_MASSIF',
+                    points = mc.points,
+                    minZ = mc.minZ or 300.0,
+                    maxZ = mc.maxZ or 1500.0,
+                    thickness = (mc.maxZ or 1500.0) - (mc.minZ or 300.0),
+                    debug = true,
+                })
+            end
 
-    -- Initialize Mount Chiliad PolyZone
-    if Config.ZoneWeather and Config.ZoneWeather.MountChiliad then
-        local mc = Config.ZoneWeather.MountChiliad
-        ClientZoneWeather.chiliadZone = Lib47.Zones.Poly({
-            name = 'MOUNT_CHILIAD_MASSIF',
-            points = mc.points,
-            minZ = mc.minZ or 300.0,
-            maxZ = mc.maxZ or 1500.0,
-            thickness = (mc.maxZ or 1500.0) - (mc.minZ or 300.0),
-            debug = isDebug,
-        })
-    end
+            -- Initialize the 7 Map PolyZones with debug rendering
+            if Config.ZoneWeather and Config.ZoneWeather.Zones then
+                for _, z in ipairs(Config.ZoneWeather.Zones) do
+                    local zoneObj = Lib47.Zones.Poly({
+                        name = z.id,
+                        points = z.points,
+                        minZ = z.minZ or -200.0,
+                        maxZ = z.maxZ or 2500.0,
+                        thickness = (z.maxZ or 2500.0) - (z.minZ or -200.0),
+                        debug = true,
+                    })
 
-    -- Initialize the 7 Map PolyZones
-    if Config.ZoneWeather and Config.ZoneWeather.Zones then
-        for _, z in ipairs(Config.ZoneWeather.Zones) do
-            local zoneObj = Lib47.Zones.Poly({
-                name = z.id,
-                points = z.points,
-                minZ = z.minZ or -200.0,
-                maxZ = z.maxZ or 2500.0,
-                thickness = (z.maxZ or 2500.0) - (z.minZ or -200.0),
-                debug = isDebug,
-            })
+                    ClientZoneWeather.polyZones[z.id] = {
+                        id = z.id,
+                        label = z.label,
+                        zoneObj = zoneObj,
+                        biome = z.biome,
+                        priority = z.priority or 1,
+                    }
+                end
+            end
 
-            ClientZoneWeather.polyZones[z.id] = {
-                id = z.id,
-                label = z.label,
-                zoneObj = zoneObj,
-                biome = z.biome,
-                priority = z.priority or 1,
-            }
+            polyZonesInitialized = true
+        else
+            -- Already initialized: turn debug rendering back ON
+            if ClientZoneWeather.chiliadZone and ClientZoneWeather.chiliadZone.setDebug then
+                ClientZoneWeather.chiliadZone:setDebug(true)
+            end
+
+            for _, z in pairs(ClientZoneWeather.polyZones) do
+                if z.zoneObj and z.zoneObj.setDebug then
+                    z.zoneObj:setDebug(true)
+                end
+            end
         end
-    end
+    else
+        -- Disabled: disable debug rendering & destroy polyzone instances so ak47_lib stops drawing them
+        if ClientZoneWeather.chiliadZone then
+            if ClientZoneWeather.chiliadZone.setDebug then
+                ClientZoneWeather.chiliadZone:setDebug(false)
+            end
+            if ClientZoneWeather.chiliadZone.destroy then
+                ClientZoneWeather.chiliadZone:destroy()
+            end
+            ClientZoneWeather.chiliadZone = nil
+        end
 
-    polyZonesInitialized = true
+        for _, z in pairs(ClientZoneWeather.polyZones) do
+            if z.zoneObj then
+                if z.zoneObj.setDebug then
+                    z.zoneObj:setDebug(false)
+                end
+                if z.zoneObj.destroy then
+                    z.zoneObj:destroy()
+                end
+            end
+        end
+
+        ClientZoneWeather.polyZones = {}
+        polyZonesInitialized = false
+    end
 end
 
 -- If debug was pre-configured, initialize debug visualizers
 CreateThread(function()
     Wait(500)
     if Config.ZoneWeather and Config.ZoneWeather.Debug then
-        InitDebugPolyZones()
+        SetDebugPolyZones(true)
     end
 end)
 
@@ -322,11 +361,10 @@ end)
 -- ====================================================================
 -- Chat Command: Zone Debug Toggle
 -- ====================================================================
-RegisterCommand('zonedebug', function()
+local function ToggleZoneDebug()
     Config.ZoneWeather.Debug = not Config.ZoneWeather.Debug
-    if Config.ZoneWeather.Debug then
-        InitDebugPolyZones()
-    end
+    SetDebugPolyZones(Config.ZoneWeather.Debug)
+
     local ped = PlayerPedId()
     local coords = GetEntityCoords(ped)
     local zoneId, zoneLabel, chiliadTier = ClientZoneWeather.GetZoneAtCoords(coords)
@@ -340,6 +378,14 @@ RegisterCommand('zonedebug', function()
         tostring(curW)
     ))
     if Lib47 and Lib47.Notify then
-        Lib47.Notify(0, ('Zone Debug %s (%s)'):format(Config.ZoneWeather.Debug and 'Enabled' or 'Disabled', tostring(zoneId)), 'info')
+        Lib47.Notify(('Zone Debug %s (%s)'):format(Config.ZoneWeather.Debug and 'Enabled' or 'Disabled', tostring(zoneId)), 'info')
+    end
+end
+
+RegisterCommand('zonedebug', ToggleZoneDebug, false)
+RegisterCommand('debugzone', ToggleZoneDebug, false)
+RegisterCommand('debug', function(source, args)
+    if args and args[1] and (args[1]:lower() == 'zone' or args[1]:lower() == 'zones') then
+        ToggleZoneDebug()
     end
 end, false)

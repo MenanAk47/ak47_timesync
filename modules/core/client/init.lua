@@ -72,11 +72,25 @@ RegisterNetEvent('ak47_timesync:client:openAdminMenu', function(initialState)
     if isUiOpen then return end
     isUiOpen = true
     SetNuiFocus(true, true)
+
+    if ClientZoneWeather and ClientZoneWeather.EvaluateActiveZone then
+        ClientZoneWeather.EvaluateActiveZone(true)
+    end
+
+    local clientState = Ak47TimeSync.Client.GetFullState()
+    if initialState and type(initialState) == 'table' then
+        for k, v in pairs(initialState) do
+            if clientState[k] == nil then
+                clientState[k] = v
+            end
+        end
+    end
+
     SendNUIMessage({
         action = 'openUI',
         data = {
             mode = 'admin',
-            state = initialState or Ak47TimeSync.Client.GetFullState(),
+            state = clientState,
             presets = Presets,
             weatherTypes = WeatherCycles and WeatherCycles.WeatherTypes or {},
             locales = Locales[Config.Locale] or Locales['en'] or {},
@@ -116,6 +130,7 @@ CreateThread(function()
         { name = 'weather', help = _U('cmd_zoneweather_type_param') },
     })
     TriggerEvent('chat:addSuggestion', '/zonedebug', 'Toggle Zone Weather debug mode and print current zone/weather info')
+    TriggerEvent('chat:addSuggestion', '/debugzone', 'Toggle Zone Weather debug mode and print current zone/weather info')
     TriggerEvent('chat:addSuggestion', '/morning', _U('cmd_morning_desc'))
     TriggerEvent('chat:addSuggestion', '/noon', _U('cmd_noon_desc'))
     TriggerEvent('chat:addSuggestion', '/evening', _U('cmd_evening_desc'))
@@ -133,6 +148,7 @@ AddEventHandler('onResourceStop', function(resourceName)
         TriggerEvent('chat:removeSuggestion', '/weather')
         TriggerEvent('chat:removeSuggestion', '/zoneweather')
         TriggerEvent('chat:removeSuggestion', '/zonedebug')
+        TriggerEvent('chat:removeSuggestion', '/debugzone')
         TriggerEvent('chat:removeSuggestion', '/freezetime')
         TriggerEvent('chat:removeSuggestion', '/freezeweather')
         TriggerEvent('chat:removeSuggestion', '/blackout')
