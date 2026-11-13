@@ -3,7 +3,8 @@
 -- ====================================================================
 
 local function GetInitiator(src)
-    return src == 0 and 'Server' or (GetPlayerName(src) or ('ID: ' .. tostring(src)))
+    local s = tonumber(src) or 0
+    return s == 0 and 'Server' or (GetPlayerName(s) or ('ID: ' .. tostring(s)))
 end
 
 AddEventHandler('ak47_timesync:server:onTimeChanged', function(source, hours, mins, transitionSpeed)

@@ -95,7 +95,7 @@ RegisterNetEvent('cd_easytime:SyncTime', function(hours, mins, instant)
             ClientTime.mins = m
             ClientTime.seconds = 0
             NetworkOverrideClockTime(h, m, 0)
-        else
+        elseif ClientTime.hours ~= h or ClientTime.mins ~= m then
             SmoothChangeTime({ hours = h, mins = m, seconds = 0 }, 5)
         end
     end
@@ -108,9 +108,13 @@ for _, evt in ipairs({'vSync:updateTime', 'qb-weathersync:client:SyncTime'}) do
             local totalMins = (baseTime or 0) + (timeOffset or 0)
             local hours = math.floor((totalMins / 60) % 24)
             local mins = math.floor(totalMins % 60)
-            SmoothChangeTime({ hours = hours, mins = mins, seconds = 0 }, 5)
+            if ClientTime.hours ~= hours or ClientTime.mins ~= mins then
+                SmoothChangeTime({ hours = hours, mins = mins, seconds = 0 }, 5)
+            end
         elseif type(baseTime) == 'number' and type(timeOffset) == 'nil' and freeze == nil then
-            SmoothChangeTime({ hours = baseTime, mins = 0, seconds = 0 }, 5)
+            if ClientTime.hours ~= baseTime then
+                SmoothChangeTime({ hours = baseTime, mins = 0, seconds = 0 }, 5)
+            end
         end
         if freeze ~= nil then
             ClientTime.freeze = freeze == true
@@ -140,7 +144,7 @@ RegisterNetEvent('cd_easytime:ForceUpdate', function(data)
                 ClientTime.mins = m
                 ClientTime.seconds = 0
                 NetworkOverrideClockTime(h, m, 0)
-            else
+            elseif ClientTime.hours ~= h or ClientTime.mins ~= m then
                 SmoothChangeTime({ hours = h, mins = m, seconds = 0 }, 5)
             end
         end

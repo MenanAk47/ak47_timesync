@@ -102,7 +102,7 @@ function SyncState.Broadcast(targetSource, forcedInstant)
 
     TriggerClientEvent('ak47_timesync:client:syncState', target, state, forcedInstant or false)
     if ZoneWeather and ZoneWeather.Broadcast then
-        ZoneWeather.Broadcast(target)
+        ZoneWeather.Broadcast(target, forcedInstant)
     end
 
     -- Compatibility client broadcasts

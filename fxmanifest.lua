@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 description 'Ak47 Time & Weather Sync'
-version '1.2.1'
+version '1.3.0'
 author 'MenanAk47'
 lua54 'yes'
 
@@ -37,8 +37,10 @@ dependencies {
     'ak47_lib',
 }
 
-provide 'qb-weathersync'
-provide 'cd_easytime'
-provide 'vSync'
-provide 'vSyncR'
-provide 'qbx_weathersync'
+provides {
+    'qb-weathersync',
+    'cd_easytime',
+    'vSync',
+    'vSyncR',
+    'qbx_weathersync'
+}

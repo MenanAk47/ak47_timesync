@@ -13,6 +13,8 @@ ClientZoneWeather = {
     polyZones = {},
 }
 
+local SNOW_TYPES = { XMAS = true, SNOW = true, SNOWLIGHT = true, BLIZZARD = true }
+
 --- Print debug info to client F8 console when debug mode is enabled
 local function DebugPrintZoneWeather(zoneId, zoneLabel, weather, details)
     if Config.ZoneWeather and Config.ZoneWeather.Debug then
@@ -151,6 +153,10 @@ local function UpdateCurrentZoneLocation(forceApply, forcedInstant)
             })
         end
     else
+        local zoneState = ClientZoneWeather.zones[zoneId]
+        local targetWeather = (zoneState and zoneState.current) or ClientWeather.current or 'CLEAR'
+        local blendDuration = forcedInstant and 0 or ((zoneState and zoneState.transitionDuration) or (Config.ZoneWeather and Config.ZoneWeather.TransitionDuration) or 12)
+
         if wasChiliad then
             ClientZoneWeather.chiliadTier = 0
             -- Restore baseline global wind speed and direction
@@ -158,13 +164,15 @@ local function UpdateCurrentZoneLocation(forceApply, forcedInstant)
             local baseWindDir = (ClientWeather and ClientWeather.windDirection) or 0.0
             SetWind(baseWind + 0.0)
             SetWindSpeed(baseWind + 0.0)
-            SetWindDirection(baseWindDir + 0.0)
+            SetWindDirection(math.rad(baseWindDir or 0.0))
+
+            -- Restore regional snow tracks state
+            local isSnow = (SNOW_TYPES[targetWeather] == true) or (ClientWeather and ClientWeather.snowTracks == true)
+            SetForceVehicleTrails(isSnow)
+            SetForcePedFootstepsTracks(isSnow)
+
             DebugPrintZoneWeather('MOUNT_CHILIAD', 'Exited Elevation Tier', 'Restoring Regional Weather & Wind', ('Alt: %.1fm | Wind: %.1fm/s'):format(coords.z, baseWind))
         end
-
-        local zoneState = ClientZoneWeather.zones[zoneId]
-        local targetWeather = (zoneState and zoneState.current) or ClientWeather.current or 'CLEAR'
-        local blendDuration = forcedInstant and 0 or ((zoneState and zoneState.transitionDuration) or (Config.ZoneWeather and Config.ZoneWeather.TransitionDuration) or 12)
 
         if forceApply or ClientZoneWeather.currentZoneId ~= zoneId or wasChiliad then
             ClientZoneWeather.currentZoneId = zoneId
@@ -297,7 +305,7 @@ RegisterNetEvent('ak47_timesync:client:syncZoneWeather', function(data)
         local baseWindDir = (ClientWeather and ClientWeather.windDirection) or 0.0
         SetWind(baseWind + 0.0)
         SetWindSpeed(baseWind + 0.0)
-        SetWindDirection(baseWindDir + 0.0)
+        SetWindDirection(math.rad(baseWindDir or 0.0))
         if ClientWeather and (ClientWeather.global or ClientWeather.current) then
             ApplyClientWeather(ClientWeather.global or ClientWeather.current, 10, false)
         end
@@ -310,3 +318,28 @@ RegisterNetEvent('ak47_timesync:client:syncZoneWeather', function(data)
         currentZoneLabel = ClientZoneWeather.currentZoneLabel,
     })
 end)
+
+-- ====================================================================
+-- Chat Command: Zone Debug Toggle
+-- ====================================================================
+RegisterCommand('zonedebug', function()
+    Config.ZoneWeather.Debug = not Config.ZoneWeather.Debug
+    if Config.ZoneWeather.Debug then
+        InitDebugPolyZones()
+    end
+    local ped = PlayerPedId()
+    local coords = GetEntityCoords(ped)
+    local zoneId, zoneLabel, chiliadTier = ClientZoneWeather.GetZoneAtCoords(coords)
+    local curW = ClientWeather and ClientWeather.current or 'UNKNOWN'
+    local status = Config.ZoneWeather.Debug and '^2ENABLED^0' or '^1DISABLED^0'
+    print(('^2[ak47_timesync] Zone Debug: %s | Zone: ^3%s^0 (%s) | Chiliad Tier: ^5%d^0 | Current Weather: ^5%s^0'):format(
+        status,
+        tostring(zoneId),
+        tostring(zoneLabel),
+        chiliadTier or 0,
+        tostring(curW)
+    ))
+    if Lib47 and Lib47.Notify then
+        Lib47.Notify(0, ('Zone Debug %s (%s)'):format(Config.ZoneWeather.Debug and 'Enabled' or 'Disabled', tostring(zoneId)), 'info')
+    end
+end, false)

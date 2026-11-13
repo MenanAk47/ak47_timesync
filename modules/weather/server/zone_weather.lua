@@ -3,7 +3,7 @@
 -- ====================================================================
 
 ZoneWeather = {
-    enabled = (SyncState and SyncState.zoneWeatherEnabled == true) or (Config.ZoneWeather and Config.ZoneWeather.Enabled == true) or false,
+    enabled = (SyncState and SyncState.zoneWeatherEnabled ~= nil and SyncState.zoneWeatherEnabled == true) or (SyncState == nil and Config.ZoneWeather and Config.ZoneWeather.Enabled == true) or false,
     zones = {},
     history = {},
 }
@@ -135,7 +135,17 @@ end
 
 --- Set weather for a specific zone or ALL zones
 function ZoneWeather.SetZoneWeather(source, zoneId, weatherType, transitionDuration, forcedInstant)
+    if type(weatherType) ~= 'string' then return false end
     weatherType = string.upper(tostring(weatherType))
+
+    local isValid = false
+    for _, wt in ipairs((WeatherCycles and WeatherCycles.WeatherTypes) or {}) do
+        if wt == weatherType then isValid = true break end
+    end
+    if not isValid and weatherType ~= 'CLEAR' and weatherType ~= 'EXTRASUNNY' and weatherType ~= 'RAIN' and weatherType ~= 'THUNDER' then
+        return false
+    end
+
     local duration = tonumber(transitionDuration) or Config.ZoneWeather.TransitionDuration or 12
 
     if zoneId == 'ALL' or zoneId == 'all' or not zoneId then
@@ -150,12 +160,11 @@ function ZoneWeather.SetZoneWeather(source, zoneId, weatherType, transitionDurat
         end
     else
         local zone = ZoneWeather.zones[zoneId]
-        if zone then
-            zone.previous = zone.current
-            zone.current = weatherType
-            zone.next = WeatherCycles and WeatherCycles.GetNextWeather and WeatherCycles.GetNextWeather(weatherType) or 'CLEAR'
-            zone.transitionDuration = duration
-        end
+        if not zone then return false end
+        zone.previous = zone.current
+        zone.current = weatherType
+        zone.next = WeatherCycles and WeatherCycles.GetNextWeather and WeatherCycles.GetNextWeather(weatherType) or 'CLEAR'
+        zone.transitionDuration = duration
     end
 
     ZoneWeather.Broadcast(nil, forcedInstant)
@@ -212,7 +221,15 @@ RegisterCommand('zoneweather', function(source, args, rawCommand)
         return
     end
 
-    ZoneWeather.SetZoneWeather(source, zoneId, weatherType)
+    local ok = ZoneWeather.SetZoneWeather(source, zoneId, weatherType)
+    if not ok then
+        if source > 0 and Lib47 and Lib47.Notify then
+            Lib47.Notify(source, 'Invalid zone ID or weather condition.', 'error')
+        else
+            print('^1[ak47_timesync] Invalid zone ID or weather condition.^0')
+        end
+        return
+    end
     if source > 0 and Lib47 and Lib47.Notify then
         Lib47.Notify(source, _U('zone_weather_updated', zoneId, weatherType), 'success')
     end

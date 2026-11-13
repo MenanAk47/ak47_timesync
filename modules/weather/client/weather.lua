@@ -109,7 +109,7 @@ RegisterNetEvent('ak47_timesync:client:setWind', function(data)
         ClientWeather.windDirection = (tonumber(data.direction) or 0.0) + 0.0
         SetWind(ClientWeather.windSpeed)
         SetWindSpeed(ClientWeather.windSpeed)
-        SetWindDirection(ClientWeather.windDirection)
+        SetWindDirection(math.rad(ClientWeather.windDirection))
         SendUiUpdate({ windSpeed = ClientWeather.windSpeed, windDirection = ClientWeather.windDirection })
     end
 end)

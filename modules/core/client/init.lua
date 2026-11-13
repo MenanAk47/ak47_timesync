@@ -60,7 +60,7 @@ RegisterNetEvent('ak47_timesync:client:syncState', function(state, forcedInstant
         if state.windSpeed ~= nil then
             SetWind(ClientWeather.windSpeed + 0.0)
             SetWindSpeed(ClientWeather.windSpeed + 0.0)
-            SetWindDirection(ClientWeather.windDirection + 0.0)
+            SetWindDirection(math.rad(ClientWeather.windDirection or 0.0))
         end
     end
 

@@ -369,21 +369,36 @@ RegisterExport('getTime', Ak47TimeSync.Server.GetTime)
 RegisterExport('GetTime', Ak47TimeSync.Server.GetTime)
 RegisterExport('getTimeState', Ak47TimeSync.Server.GetTime)
 RegisterExport('GetTimeState', Ak47TimeSync.Server.GetTime)
-RegisterExport('setTime', function(h, m, s, spd, inst) return Ak47TimeSync.Server.SetTime(0, h, m, s, spd, inst) end)
-RegisterExport('SetTime', function(h, m, s, spd, inst) return Ak47TimeSync.Server.SetTime(0, h, m, s, spd, inst) end)
+local function ExportSetTime(h, m, s, spd, inst)
+    if type(s) == 'boolean' then
+        inst = s
+        spd = inst and 0 or 5
+        s = 0
+    end
+    return Ak47TimeSync.Server.SetTime(0, h, m, s, spd, inst)
+end
+RegisterExport('setTime', ExportSetTime)
+RegisterExport('SetTime', ExportSetTime)
 RegisterExport('getMinuteDuration', Ak47TimeSync.Server.GetMinuteDuration)
 RegisterExport('GetMinuteDuration', Ak47TimeSync.Server.GetMinuteDuration)
 RegisterExport('setMinuteDuration', function(d) return Ak47TimeSync.Server.SetMinuteDuration(0, d) end)
 RegisterExport('SetMinuteDuration', function(d) return Ak47TimeSync.Server.SetMinuteDuration(0, d) end)
 
+local function ExportSetWeather(w, dur, inst)
+    if type(dur) == 'boolean' then
+        inst = dur
+        dur = inst and 0 or 10
+    end
+    return Ak47TimeSync.Server.SetWeather(0, w, dur, inst)
+end
 RegisterExport('getWeather', Ak47TimeSync.Server.GetWeather)
 RegisterExport('GetWeather', Ak47TimeSync.Server.GetWeatherObject)
 RegisterExport('getWeatherState', Ak47TimeSync.Server.GetWeather)
 RegisterExport('GetWeatherState', Ak47TimeSync.Server.GetWeather)
 RegisterExport('getNextWeather', Ak47TimeSync.Server.GetNextWeather)
 RegisterExport('GetNextWeather', Ak47TimeSync.Server.GetNextWeather)
-RegisterExport('setWeather', function(w, dur, inst) return Ak47TimeSync.Server.SetWeather(0, w, dur, inst) end)
-RegisterExport('SetWeather', function(w, dur, inst) return Ak47TimeSync.Server.SetWeather(0, w, dur, inst) end)
+RegisterExport('setWeather', ExportSetWeather)
+RegisterExport('SetWeather', ExportSetWeather)
 
 RegisterExport('getBlackout', Ak47TimeSync.Server.GetBlackout)
 RegisterExport('GetBlackout', Ak47TimeSync.Server.GetBlackout)
@@ -400,6 +415,8 @@ RegisterExport('isTimeFrozen', Ak47TimeSync.Server.IsTimeFrozen)
 RegisterExport('IsTimeFrozen', Ak47TimeSync.Server.IsTimeFrozen)
 RegisterExport('setTimeFreeze', function(s) return Ak47TimeSync.Server.SetFreezeTime(0, s) end)
 RegisterExport('SetTimeFreeze', function(s) return Ak47TimeSync.Server.SetFreezeTime(0, s) end)
+RegisterExport('setFreezeTime', function(s) return Ak47TimeSync.Server.SetFreezeTime(0, s) end)
+RegisterExport('SetFreezeTime', function(s) return Ak47TimeSync.Server.SetFreezeTime(0, s) end)
 RegisterExport('toggleFreezeTime', function(s) return Ak47TimeSync.Server.SetFreezeTime(0, s) end)
 RegisterExport('ToggleFreezeTime', function(s) return Ak47TimeSync.Server.SetFreezeTime(0, s) end)
 
@@ -409,6 +426,8 @@ RegisterExport('isWeatherFrozen', Ak47TimeSync.Server.IsWeatherFrozen)
 RegisterExport('IsWeatherFrozen', Ak47TimeSync.Server.IsWeatherFrozen)
 RegisterExport('setWeatherFreeze', function(s) return Ak47TimeSync.Server.SetFreezeWeather(0, s) end)
 RegisterExport('SetWeatherFreeze', function(s) return Ak47TimeSync.Server.SetFreezeWeather(0, s) end)
+RegisterExport('setFreezeWeather', function(s) return Ak47TimeSync.Server.SetFreezeWeather(0, s) end)
+RegisterExport('SetFreezeWeather', function(s) return Ak47TimeSync.Server.SetFreezeWeather(0, s) end)
 RegisterExport('toggleFreezeWeather', function(s) return Ak47TimeSync.Server.SetFreezeWeather(0, s) end)
 RegisterExport('ToggleFreezeWeather', function(s) return Ak47TimeSync.Server.SetFreezeWeather(0, s) end)
 
