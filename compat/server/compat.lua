@@ -234,4 +234,21 @@ RegisterNetEvent('qb-weathersync:server:nextWeatherStage', function()
     end
 end)
 
+-- ====================================================================
+-- esx_weather Specific Server Handlers
+-- ====================================================================
+
+local ESX_ZONE_MAP = {
+    ["Los Santos"] = "LS_SOUTH",
+    ["Sandy Shores"] = "DESERT",
+    ["Paleto Bay"] = "PALETO_WILDERNESS",
+}
+
+RegisterNetEvent("esx_weather:server:setZoneWeather", function(zone, weatherType)
+    local src = source
+    if not Ak47TimeSync.Server.HasPermission(src) then return end
+    local mappedZone = ESX_ZONE_MAP[zone] or zone
+    Ak47TimeSync.Server.SetZoneWeather(src, mappedZone, weatherType)
+end)
+
 

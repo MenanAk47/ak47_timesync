@@ -354,6 +354,7 @@ local RESOURCE_ALIASES = {
     'vSync',
     'vSyncR',
     'qbx_weathersync',
+    'esx_weather',
 }
 
 local function RegisterExport(exportName, func)

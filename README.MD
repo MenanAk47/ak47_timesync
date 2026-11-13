@@ -155,6 +155,7 @@ local isPaused = exports['ak47_timesync']:IsSyncPaused()
 - **`qb-weathersync` / `qbx_weathersync`:** `getWeatherState`, `getTimeState`, `getBlackoutState`, `getTimeFreezeState`, `setWeather`, `setTime`, `setBlackout`, `setTimeFreeze`, etc.
 - **`cd_easytime`:** `GetWeather`, `GetTime`, `GetPauseSyncState`, `SetPauseSync`, `TogglePauseSync`, `GetAllData`, `GetRealData`, etc.
 - **`vSync` / `vSyncR`:** `getWeather`, `getTime`, `updateWeather`, `updateTime`, `toggle`, etc.
+- **`esx_weather`:** `ToggleWeatherSync`, `ToggleTimeSync`, `esx_weather:server:setZoneWeather`, `esx_weather:client:time:setTime`, etc.
 
 ---
 

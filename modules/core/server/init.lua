@@ -123,6 +123,11 @@ function SyncState.Broadcast(targetSource, forcedInstant)
     })
     TriggerClientEvent('vSync:updateWeather', target, SyncState.weather, SyncState.blackout)
     TriggerClientEvent('vSync:updateTime', target, 0, ((SyncState.hours or 12) * 60 + (SyncState.mins or 0)), SyncState.freezeTime)
+    TriggerClientEvent('esx_weather:client:time:setTime', target, {
+        hours = SyncState.hours or 12,
+        minutes = SyncState.mins or 0,
+        seconds = SyncState.seconds or 0,
+    })
 end
 
 function SyncState.SetTime(source, hours, mins, seconds, transitionSpeed, forcedInstant)

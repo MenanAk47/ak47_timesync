@@ -42,5 +42,6 @@ provides {
     'cd_easytime',
     'vSync',
     'vSyncR',
-    'qbx_weathersync'
+    'qbx_weathersync',
+    'esx_weather',
 }

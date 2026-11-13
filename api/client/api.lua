@@ -232,6 +232,7 @@ local RESOURCE_ALIASES = {
     'vSync',
     'vSyncR',
     'qbx_weathersync',
+    'esx_weather',
 }
 
 local function RegisterExport(exportName, func)
@@ -305,4 +306,22 @@ RegisterExport('getZoneWeather', Ak47TimeSync.Client.GetZoneWeather)
 RegisterExport('GetZoneWeather', Ak47TimeSync.Client.GetZoneWeather)
 RegisterExport('isInsideChiliad', Ak47TimeSync.Client.IsInsideChiliad)
 RegisterExport('IsInsideChiliad', Ak47TimeSync.Client.IsInsideChiliad)
+
+-- esx_weather client exports
+local function ToggleWeatherSyncHandler(toggle)
+    local isPaused = toggle == false
+    if ClientWeather then ClientWeather.paused = isPaused end
+    if not isPaused then TriggerServerEvent('ak47_timesync:server:requestSync') end
+end
+
+local function ToggleTimeSyncHandler(toggle)
+    local isPaused = toggle == false
+    if ClientTime then ClientTime.paused = isPaused end
+    if not isPaused then TriggerServerEvent('ak47_timesync:server:requestSync') end
+end
+
+RegisterExport('ToggleWeatherSync', ToggleWeatherSyncHandler)
+RegisterExport('toggleWeatherSync', ToggleWeatherSyncHandler)
+RegisterExport('ToggleTimeSync', ToggleTimeSyncHandler)
+RegisterExport('toggleTimeSync', ToggleTimeSyncHandler)
 
